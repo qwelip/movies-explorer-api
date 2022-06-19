@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const { URL_REG_STR } = require('../constants/constants');
+
+const urlRegExp = new RegExp(URL_REG_STR);
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -25,8 +28,8 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator() {
-        // return urlRegExp.test(str); todo
+      validator(str) {
+        return urlRegExp.test(str);
       },
       message: 'Введите корректную ссылку',
     },
@@ -34,19 +37,19 @@ const movieSchema = new mongoose.Schema({
   trailerLink: {
     type: String,
     required: true,
-    // validate: {
-    //   validator() {
-    //     return urlRegExp.test(str); todo
-    //   },
-    //   message: 'Введите корректную ссылку',
-    // },
+    validate: {
+      validator(str) {
+        return urlRegExp.test(str);
+      },
+      message: 'Введите корректную ссылку',
+    },
   },
   thumbnail: {
     type: String,
     required: true,
     validate: {
-      validator() {
-        // return urlRegExp.test(str); todo
+      validator(str) {
+        return urlRegExp.test(str);
       },
       message: 'Введите корректную ссылку',
     },
@@ -56,7 +59,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   movieId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
   },
   nameRU: {

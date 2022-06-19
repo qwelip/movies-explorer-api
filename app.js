@@ -1,13 +1,19 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
+const { celebrate, Joi, errors } = require('celebrate');
 
-const { auth } = require('./middlewares/auth');
+const { NODE_ENV, DB_ADDRESS } = process.env;
+const addressBD = NODE_ENV === 'production' ? DB_ADDRESS : 'mongodb://localhost:27017/moviesdb';
+
 const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
+const { checkCors } = require('./middlewares/cors');
 const { login, createUser } = require('./controllers/users');
+const { auth } = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-
 const { NotFoundError } = require('./errors/NotFoundError');
 
 const {
@@ -19,11 +25,23 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
-
+app.use(checkCors);
 app.use(requestLogger);
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+  }),
+}), createUser);
+
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+}), login);
 
 app.use(auth);
 
@@ -35,6 +53,7 @@ app.use('/', (req, res, next) => {
 });
 
 app.use(errorLogger);
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
@@ -45,7 +64,7 @@ app.use((err, req, res, next) => {
 });
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+  await mongoose.connect(addressBD, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });

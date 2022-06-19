@@ -41,11 +41,6 @@ function getCurrentUser(req, res, next) {
 function updateCurrentUser(req, res, next) {
   const { name, email } = req.body;
 
-  if (!name || !email) {
-    next(new ValidationError(VALIDATION_ERROR_TEXT));
-    return;
-  }
-
   User.findByIdAndUpdate(
     req.user._id,
     { name, email },
@@ -65,11 +60,6 @@ function updateCurrentUser(req, res, next) {
 
 async function login(req, res, next) {
   const { email, password } = req.body;
-
-  if (!password || !email) {
-    next(new ValidationError(VALIDATION_ERROR_TEXT));
-    return;
-  }
 
   try {
     const user = await User.findOne({ email }).select('+password');

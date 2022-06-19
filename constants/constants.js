@@ -4,6 +4,8 @@ const STATUS_OK = 200;
 const SECRET = NODE_ENV === 'production' ? JWT_SECRET : 'SECRET';
 const PASSWORD_HASH = 10;
 const STATUS_CREATED = 201;
+const LENGTH_OF_ID = 24;
+const URL_REG_STR = '^(https?:)\/\/(www.)?[a-zA-Z0-9\./_~:/?#!$&()*+,;=\\]\\[-]+\\.[a-zA-Z0-9\./_~:/?#!$&()*+,;=\\]\\[-]+$';
 
 const VALIDATION_ERROR_TEXT = 'Переданы некорректные данные';
 const COMMON_ERROR_TEXT = 'Ошибка сервера';
@@ -29,4 +31,6 @@ module.exports = {
   PASSWORD_HASH,
   STATUS_CREATED,
   AUTH_REQUIRED_ERROR_TEXT,
+  LENGTH_OF_ID,
+  URL_REG_STR,
 };
