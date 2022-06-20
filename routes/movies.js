@@ -1,10 +1,8 @@
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
 const moviesRouter = require('express').Router();
 
 const { getSavedMovies, createMovie, deleteMovie } = require('../controllers/movies');
-const { URL_REG_STR } = require('../constants/constants');
-
-const urlRegExp = new RegExp(URL_REG_STR);
 
 moviesRouter.get('/', getSavedMovies);
 
@@ -15,12 +13,27 @@ moviesRouter.post('/', celebrate({
     duration: Joi.number().required(),
     year: Joi.number().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().pattern(urlRegExp),
-    trailerLink: Joi.string().required().pattern(urlRegExp),
+    image: Joi.string().required().custom((value, helpers) => {
+      if (validator.isURL(value)) {
+        return value;
+      }
+      return helpers.message('Ссылка заполненна некорректно');
+    }),
+    trailerLink: Joi.string().required().custom((value, helpers) => {
+      if (validator.isURL(value)) {
+        return value;
+      }
+      return helpers.message('Ссылка заполненна некорректно');
+    }),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    thumbnail: Joi.string().required(),
-    movieId: Joi.string().required(),
+    thumbnail: Joi.string().required().custom((value, helpers) => {
+      if (validator.isURL(value)) {
+        return value;
+      }
+      return helpers.message('Ссылка заполненна некорректно');
+    }),
+    movieId: Joi.number().required(),
   }),
 }), createMovie);
 

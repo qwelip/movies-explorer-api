@@ -9,7 +9,6 @@ const { NotValidAuthError } = require('../errors/NotValidAuthError');
 const { UnicConflictError } = require('../errors/UnicConflictError');
 
 const {
-  STATUS_OK,
   VALIDATION_ERROR_TEXT,
   COMMON_ERROR_TEXT,
   NOT_VALID_AUTH_ERROR_TEXT,
@@ -29,12 +28,8 @@ function getCurrentUser(req, res, next) {
       }
       res.send({ data: user });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError(VALIDATION_ERROR_TEXT));
-      } else {
-        next(new CommonError(COMMON_ERROR_TEXT));
-      }
+    .catch(() => {
+      next(new CommonError(COMMON_ERROR_TEXT));
     });
 }
 
@@ -47,11 +42,13 @@ function updateCurrentUser(req, res, next) {
     { new: true, runValidators: true, upsert: false },
   )
     .then((user) => {
-      res.status(STATUS_OK).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError(VALIDATION_ERROR_TEXT));
+      } if (err.code === 11000) {
+        next(new UnicConflictError(UNIC_CONFLICT_ERROR_TEXT));
       } else {
         next(new CommonError(COMMON_ERROR_TEXT));
       }

@@ -4,7 +4,6 @@ const {
   STATUS_CREATED,
   COMMON_ERROR_TEXT,
   VALIDATION_ERROR_TEXT,
-  STATUS_OK,
   NOT_FOUND_MOVIE_ERROR_TEXT,
   ACCESS_DENIED_ERROR_TEXT,
 } = require('../constants/constants');
@@ -79,16 +78,15 @@ async function deleteMovie(req, res, next) {
 
     Movie.findByIdAndRemove(req.params.movieId)
       .then(() => {
-        res.status(STATUS_OK).send({ data: movie });
+        res.send({ data: movie });
       })
-      .catch((err) => {
-        if (err.name === 'CastError') {
-          next(new ValidationError(VALIDATION_ERROR_TEXT));
-        } else {
-          next(new CommonError(COMMON_ERROR_TEXT));
-        }
+      .catch(() => {
+        next(new CommonError(COMMON_ERROR_TEXT));
       });
   } catch (err) {
+    if (err.name === 'CastError') {
+      next(new ValidationError(VALIDATION_ERROR_TEXT));
+    }
     next(err);
   }
 }
