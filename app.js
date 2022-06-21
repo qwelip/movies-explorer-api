@@ -5,8 +5,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 
-const { NODE_ENV, DB_ADDRESS } = process.env;
-const addressBD = NODE_ENV === 'production' ? DB_ADDRESS : 'mongodb://localhost:27017/moviesdb';
+// const { NODE_ENV, DB_ADDRESS } = process.env;
+// const addressBD = NODE_ENV === 'production' ? DB_ADDRESS : 'mongodb://localhost:27017/moviesdb';
 
 const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
@@ -64,7 +64,7 @@ app.use((err, req, res, next) => {
 });
 
 async function main() {
-  await mongoose.connect(addressBD, {
+  await mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
