@@ -94,7 +94,8 @@ function createUser(req, res, next) {
         .then((user) => {
           const newUser = user.toObject();
           delete newUser.password;
-          res.status(STATUS_CREATED).send({ data: newUser });
+          const token = jwt.sign({ _id: user._id }, SECRET, { expiresIn: '7d' });
+          res.status(STATUS_CREATED).send({ data: newUser, token });
         })
         .catch((err) => {
           if (err.code === 11000) {

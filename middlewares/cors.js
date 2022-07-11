@@ -1,6 +1,6 @@
 const allowedCors = [
-  'http://andmed-practicum.nomoreparties.sbs',
-  'https://andmed-practicum.nomoreparties.sbs',
+  'http://diplom-andmed.nomoredomains.xyz',
+  'https://diplom-andmed.nomoredomains.xyz',
 ];
 
 // eslint-disable-next-line consistent-return
